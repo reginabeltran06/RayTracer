@@ -1,15 +1,33 @@
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-public class Main {
-    public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
+import java.io.IOException;
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            System.out.println("i = " + i);
-        }
+public class Main {
+
+    public static void main(String[] args) throws IOException {
+
+        Camera camera = new Camera(
+                new Vector3D(0, 0, 0),
+                1200,
+                1200,
+                90
+        );
+
+        Scene scene = new Scene();
+
+        scene.addObject(new Sphere(
+                new Vector3D(.8, 1, -9),
+                1,
+                new Vector3D(1, 0, 0)
+        ));
+
+        scene.addObject(new Sphere(
+                new Vector3D(7, 1.5, -16),   //both spheres are the same size, the blue is just farther away
+                1,
+                new Vector3D(0, 0, 1)
+        ));
+
+        Raytracer rt = new Raytracer(camera, scene);
+        rt.setBackgroundColor(new Vector3D(1, 1, 1));
+
+        rt.renderToFile("outputRaytracerV01.png");
     }
 }
