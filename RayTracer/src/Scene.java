@@ -17,15 +17,20 @@ public class Scene {
         return objects;
     }
 
-    public Intersection closestIntersection(Ray ray) {
+    public Intersection closestIntersection(Ray ray, double near, double far) {
         Intersection closest = null;
 
         for (Object3D obj : objects) {
             Intersection hit = obj.intersect(ray);
 
             if (hit != null && hit.isValid()) {
-                if (closest == null || hit.getT() < closest.getT()) {
-                    closest = hit;
+                double t = hit.getT();
+
+                if ( t >= near && t <= far){
+
+                    if (closest == null || t < closest.getT()) {
+                        closest = hit;
+                    }
                 }
             }
         }

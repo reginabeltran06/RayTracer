@@ -8,13 +8,18 @@ public class Camera {
     private final double aspectRatio;
     private final double halfWidthTan;
 
-    public Camera(Vector3D position, int width, int height, double fov) {
+    private double nearPlane;         //v.02 add near and far planes
+    private double farPlane;
+
+    public Camera(Vector3D position, int width, int height, double fov, double nearPlane, double farPlane) {
         this.position = position;
         this.width = width;
         this.height = height;
         this.fov = fov;
         this.aspectRatio = (double) width / height;
         this.halfWidthTan = Math.tan(Math.toRadians(fov / 2.0));
+        this.nearPlane = nearPlane;
+        this.farPlane = farPlane;
     }
 
     public Ray generateRay(int px, int py) {
@@ -24,7 +29,8 @@ public class Camera {
         double screenX = (2 * ndcX - 1) * aspectRatio * halfWidthTan;
         double screenY = -(2 * ndcY - 1) * halfWidthTan;
 
-        Vector3D direction = new Vector3D(screenX, screenY, -1);
+        Vector3D direction = new Vector3D(screenX, screenY, -1).normalize();
+
         return new Ray(position, direction);
     }
 
@@ -51,4 +57,12 @@ public class Camera {
     public double getHalfWidthTan() {
         return halfWidthTan;
     }
+
+    public double getFarPlane() { return farPlane;}
+
+    public void setFarPlane(double farPlane) { this.farPlane = farPlane;}
+
+    public double getNearPlane() { return nearPlane; }
+
+    public void setNearPlane(double nearPlane) { this.nearPlane = nearPlane; }
 }

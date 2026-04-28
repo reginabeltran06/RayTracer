@@ -27,7 +27,7 @@ public class Raytracer {
             for (int x = 0; x < width; x++) {
 
                 Ray ray = camera.generateRay(x, y);
-                Intersection hit = scene.closestIntersection(ray);
+                Intersection hit = scene.closestIntersection(ray, camera.getNearPlane(), camera.getFarPlane());
 
                 Vector3D pixelColor = (hit != null) ? hit.getObject().getColor() : backgroundColor;
 
