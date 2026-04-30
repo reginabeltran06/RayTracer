@@ -1,45 +1,15 @@
-# IntelliJ IDEA
+# Compilados
+out/
+build/
+target/
+*.class
+
+# IntelliJ
 .idea/
 *.iml
-*.ipr
-*.iws
-.xml
 
-# Compiled files
-out/
-target/
-build/
-
-# Java class files
-*.class
+# macOS
+.DS_Store
 
 # Logs
 *.log
-
-# OS files
-.DS_Store
-Thumbs.db
-
-# Temporary files
-*.tmp
-*.swp
-*~
-
-# Package files
-*.jar
-*.war
-*.ear
-
-# Generated crash logs
-hs_err_pid*
-replay_pid*
-
-# Maven
-dependency-reduced-pom.xml
-
-# Gradle
-.gradle/
-
-
-# Environment files
-.env

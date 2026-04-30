@@ -8,7 +8,7 @@ public class Camera {
     private final double aspectRatio;
     private final double halfWidthTan;
 
-    private double nearPlane;         //v.02 add near and far planes
+    private double nearPlane;
     private double farPlane;
 
     public Camera(Vector3D position, int width, int height, double fov, double nearPlane, double farPlane) {
