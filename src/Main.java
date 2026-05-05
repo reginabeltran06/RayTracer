@@ -5,21 +5,27 @@ public class Main {
     public static void main(String[] args) throws IOException {
 
         Camera camera = new Camera(
-                new Vector3D(-2, 5, 0),
+                new Vector3D(0, 0, 0),
                 1200,
                 1200,
                 60,
-                5,
+                4,
                 30
+        );
+
+        Light light = new Light(
+                new Vector3D(0, 1, -1),         //light coming from "the camera" and from below
+                new Vector3D(1,1,1),
+                1.0
         );
 
 
         Scene scene = new Scene();
 
 
-        scene.addObject(new Sphere(                     //sphere won't be rendered because it's in front of near plane
-                new Vector3D(-2, 3, -3),
-                1,
+        scene.addObject(new Sphere(
+                new Vector3D(4, -5, -27),
+                2,
                 new Vector3D(1, 0, 0)
         ));
 
@@ -28,8 +34,8 @@ public class Main {
                 "models/teapot.obj",
                 scene,
                 new Vector3D(0, 1, 0),
-                1,
-                new Vector3D(-3,5,-6)
+                2,
+                new Vector3D(-2,0,-10)
 
         );
 
@@ -38,7 +44,7 @@ public class Main {
                 scene,
                 new Vector3D(0, 0, 1),
                 1,
-                new Vector3D(-3,0,-10)
+                new Vector3D(-3,-4,-11)
 
         );
 
@@ -47,7 +53,7 @@ public class Main {
                 scene,
                 new Vector3D(1, 0, 1),
                 25.0,
-                new Vector3D(3,3,-13)
+                new Vector3D(3,.5,-10)
         );
 
 
@@ -67,9 +73,9 @@ public class Main {
 //        ));
 
 
-        Raytracer rt = new Raytracer(camera, scene);
+        Raytracer rt = new Raytracer(camera, scene, light);
         rt.setBackgroundColor(new Vector3D(1, 1, 1));
 
-        rt.renderToFile("outputRaytracerV03.png");
+        rt.renderToFile("outputRaytracerV04.png");
     }
 }

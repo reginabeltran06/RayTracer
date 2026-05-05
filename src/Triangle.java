@@ -4,7 +4,7 @@ public class Triangle extends Object3D {
     private final Vector3D v1;
     private final Vector3D v2;
 
-    private static final double epsilon = 0.001;
+    private static final double epsilon = 0.00001;
 
     public Triangle(Vector3D v0, Vector3D v1, Vector3D v2, Vector3D color) {
         super(color);
@@ -47,6 +47,10 @@ public class Triangle extends Object3D {
         Vector3D point = ray.at(t);
 
         Vector3D normal = edge1.cross(edge2).normalize();
+
+        if (normal.dot(ray.getDirection()) > 0) {
+            normal = normal.scale(-1);
+        }
 
         return new Intersection(t, point, normal, this);
     }

@@ -9,12 +9,15 @@ public class Raytracer {
     private final Camera camera;
     private final Scene  scene;
 
+    private Light light;
+
     private Vector3D backgroundColor = new Vector3D(1, 1, 1);
 
 
-    public Raytracer(Camera camera, Scene scene) {
+    public Raytracer(Camera camera, Scene scene, Light light) {
         this.camera = camera;
         this.scene = scene;
+        this.light = light;
     }
 
     public BufferedImage render() {
@@ -29,7 +32,28 @@ public class Raytracer {
                 Ray ray = camera.generateRay(x, y);
                 Intersection hit = scene.closestIntersection(ray, camera.getNearPlane(), camera.getFarPlane());
 
-                Vector3D pixelColor = (hit != null) ? hit.getObject().getColor() : backgroundColor;
+
+                Vector3D pixelColor;
+                if (hit != null) {
+                    Vector3D baseColor = hit.getObject().getColor();
+                    Vector3D normal = hit.getNormal();
+
+                    Vector3D lightDir = light.getDirection().scale(-1);
+
+                    double ndotl = Math.max(0, normal.dot(lightDir));
+
+                    pixelColor = new Vector3D(
+                            baseColor.x * light.getColor().x * light.getIntensity() * ndotl,
+                            baseColor.y * light.getColor().y * light.getIntensity() * ndotl,
+                            baseColor.z * light.getColor().z * light.getIntensity() * ndotl
+                    );
+
+                }else{
+                    pixelColor = backgroundColor;
+                }
+
+
+
 
                 image.setRGB(x, y, toRGB(pixelColor));
             }
