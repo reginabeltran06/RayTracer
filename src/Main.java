@@ -22,9 +22,9 @@ public class Main {
         );
 
         Light light = new Light(
-                new Vector3D(0, 1, -1),         //light coming from "the camera" and from below
+                new Vector3D(0, -1, -1),         //light coming from "the camera" and from above
                 new Vector3D(1,1,1),
-                1.0
+                2
         );
 
 
@@ -34,27 +34,19 @@ public class Main {
         scene.addObject(new Sphere(
                 new Vector3D(4, -5, -27),
                 2,
-                new Vector3D(1, 0, 0)
+                new Vector3D(0, 0, 1)
         ));
 
 
         OBJReader.load(
                 "src/models/teapot.obj",
                 scene,
-                new Vector3D(0, 1, 0),
+                new Vector3D(0, 1, 1),
                 2,
-                new Vector3D(-2,0,-10)
+                new Vector3D(-2,-1,-9)
 
         );
 
-        OBJReader.load(
-                "src/models/cube.obj",
-                scene,
-                new Vector3D(0, 0, 1),
-                1,
-                new Vector3D(-3,-4,-11)
-
-        );
 
         OBJReader.load(
                 "src/models/bunny.obj",

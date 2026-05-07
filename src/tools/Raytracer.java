@@ -17,7 +17,7 @@ public class Raytracer {
 
     private Light light;
 
-    private Vector3D backgroundColor = new Vector3D(1, 1, 1);
+    private Vector3D backgroundColor = new Vector3D(0, 0, 0);
 
 
     public Raytracer(Camera camera, Scene scene, Light light) {

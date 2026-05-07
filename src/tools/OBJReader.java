@@ -16,6 +16,8 @@ public class OBJReader {
 
         List<Vector3D> vertices = new ArrayList<>();
         List<Vector3D> normals = new ArrayList<>();
+        List<Face> faces = new ArrayList<>();
+
 
         BufferedReader br = new BufferedReader(new FileReader(path));
         String line;
@@ -84,14 +86,11 @@ public class OBJReader {
 
                 // triangle
                 if (vertexIdx.length == 3) {
-                    addTriangle(
-                        scene,
-                        vertices,
-                        normals,
-                        vertexIdx,
-                        normalIdx,
-                        hasNormals,
-                        color
+                    faces.add(
+                        new Face(
+                            vertexIdx,
+                            normalIdx
+                        )
                     );
                 }
 
@@ -121,45 +120,73 @@ public class OBJReader {
                             normalIdx[3]
                     };
 
-                    addTriangle(
-                            scene,
-                            vertices,
-                            normals,
-                            tri1v,
-                            tri1n,
-                            hasNormals,
-                            color
-                    );
+                    faces.add(new Face(tri1v, tri1n));
+                    faces.add(new Face(tri2v, tri2n));
 
-                    addTriangle(
-                            scene,
-                            vertices,
-                            normals,
-                            tri2v,
-                            tri2n,
-                            hasNormals,
-                            color
-                    );
                 }
             }
         }
 
-        br.close();
-    }
+        boolean useOBJNormals = !normals.isEmpty();
+        List<Vector3D> generatedNormals = new ArrayList<>();
 
-    private static void addTriangle(
-        Scene scene,
-        List<Vector3D> vertices,
-        List<Vector3D> normals,
-        int[] v,
-        int[] n,
-        boolean hasNormals,
-        Vector3D color
-        ) {
+        for (int i = 0; i < vertices.size(); i++) {
+            generatedNormals.add(new Vector3D(0,0,0));
+        }
 
-            if (hasNormals) {
+        if (!useOBJNormals) {
+
+            for (Face face : faces) {
+
+                int i0 = face.vertexIdx[0];
+                int i1 = face.vertexIdx[1];
+                int i2 = face.vertexIdx[2];
+
+                Vector3D v0 = vertices.get(i0);
+                Vector3D v1 = vertices.get(i1);
+                Vector3D v2 = vertices.get(i2);
+
+                Vector3D edge1 = v1.subtract(v0);
+                Vector3D edge2 = v2.subtract(v0);
+
+                Vector3D faceNormal = edge1.cross(edge2).normalize();
+
+                generatedNormals.set(
+                    i0,
+                    generatedNormals.get(i0).add(faceNormal)
+                );
+
+                generatedNormals.set(
+                    i1,
+                    generatedNormals.get(i1).add(faceNormal)
+                );
+
+                generatedNormals.set(
+                    i2,
+                    generatedNormals.get(i2).add(faceNormal)
+                );
+            }
+        }
+
+        if (!useOBJNormals) {
+            for (int i = 0; i < generatedNormals.size(); i++) {
+                generatedNormals.set(
+                    i,
+                    generatedNormals.get(i).normalize()
+                );
+            }
+        }
+
+        for (Face face : faces) {
+
+            int[] v = face.vertexIdx;
+            int[] n = face.normalIdx;
+
+            if (useOBJNormals) {
+
                 scene.addObject(
                     new Triangle(
+
                         vertices.get(v[0]),
                         vertices.get(v[1]),
                         vertices.get(v[2]),
@@ -171,18 +198,27 @@ public class OBJReader {
                         color
                     )
                 );
-            }
 
-            else {
+            } else {
+
                 scene.addObject(
                     new Triangle(
+
                         vertices.get(v[0]),
                         vertices.get(v[1]),
                         vertices.get(v[2]),
+
+                        generatedNormals.get(v[0]),
+                        generatedNormals.get(v[1]),
+                        generatedNormals.get(v[2]),
 
                         color
                     )
                 );
             }
         }
+
+
+        br.close();
+    }
 }
