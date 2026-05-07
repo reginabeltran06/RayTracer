@@ -1,3 +1,9 @@
+package tools;
+
+import lights.Light;
+import objects.Camera;
+import scene.Scene;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -7,7 +13,7 @@ import java.io.IOException;
 public class Raytracer {
 
     private final Camera camera;
-    private final Scene  scene;
+    private final Scene scene;
 
     private Light light;
 

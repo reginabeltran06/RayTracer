@@ -1,16 +1,45 @@
+package objects;
+
+import tools.*;
+
 public class Triangle extends Object3D {
 
     private final Vector3D v0;
     private final Vector3D v1;
     private final Vector3D v2;
 
+    private final Vector3D n0;
+    private final Vector3D n1;
+    private final Vector3D n2;
+
+
     private static final double epsilon = 0.00001;
+
+    public Triangle(Vector3D v0, Vector3D v1, Vector3D v2, Vector3D n0, Vector3D n1, Vector3D n2, Vector3D color) {
+        super(color);
+        this.v0 = v0;
+        this.v1 = v1;
+        this.v2 = v2;
+
+        this.n0 = n0.normalize();
+        this.n1 = n1.normalize();
+        this.n2 = n2.normalize();
+    }
 
     public Triangle(Vector3D v0, Vector3D v1, Vector3D v2, Vector3D color) {
         super(color);
         this.v0 = v0;
         this.v1 = v1;
         this.v2 = v2;
+
+        Vector3D edge1 = v1.subtract(v0);
+        Vector3D edge2 = v2.subtract(v0);
+
+        Vector3D normal = edge1.cross(edge2).normalize();
+
+        this.n0 = normal;
+        this.n1 = normal;
+        this.n2 = normal;
     }
 
     @Override
@@ -46,11 +75,14 @@ public class Triangle extends Object3D {
 
         Vector3D point = ray.at(t);
 
-        Vector3D normal = edge1.cross(edge2).normalize();
+        //phong
+        double w = 1.0 - u - v;
 
-        if (normal.dot(ray.getDirection()) > 0) {
-            normal = normal.scale(-1);
-        }
+        Vector3D normal = n0.scale(w).add(n1.scale(u)).add(n2.scale(v)).normalize();
+
+//        if (normal.dot(ray.getDirection()) > 0) {
+//            normal = normal.scale(-1);
+//        }
 
         return new Intersection(t, point, normal, this);
     }

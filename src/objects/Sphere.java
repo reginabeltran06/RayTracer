@@ -1,3 +1,7 @@
+package objects;
+
+import tools.*;
+
 public class Sphere extends Object3D {
 
     private Vector3D center;
@@ -17,7 +21,6 @@ public class Sphere extends Object3D {
         Vector3D L = center.subtract(O);
 
         double tca = L.dot(D);
-
         if (tca < 0) return null; // object is behind the ray
 
         double d2 = L.dot(L) - tca * tca;

@@ -1,3 +1,7 @@
+package objects;
+
+import tools.*;
+
 public class Camera {
 
     private final Vector3D position;

@@ -1,3 +1,6 @@
+package tools;
+import objects.*;
+
 public class Ray {
 
     private final Vector3D origin;     // O

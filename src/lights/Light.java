@@ -1,3 +1,7 @@
+package lights;
+
+import tools.Vector3D;
+
 public class Light {
 
     private Vector3D direction;

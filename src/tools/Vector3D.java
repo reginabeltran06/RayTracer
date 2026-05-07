@@ -1,3 +1,6 @@
+package tools;
+import objects.*;
+
 public class Vector3D {
 
     public double x, y, z;
@@ -62,6 +65,10 @@ public class Vector3D {
 
     public Vector3D normalize(){
         double mag = magnitude();
+
+        if (mag == 0)
+            return new Vector3D(0,0,0);
+
         return new Vector3D(x / mag, y / mag, z / mag);
     }
 

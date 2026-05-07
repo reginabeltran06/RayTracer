@@ -1,3 +1,7 @@
+package tools;
+
+import objects.*;
+
 public class Intersection {
 
     private final double t;

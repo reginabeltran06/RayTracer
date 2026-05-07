@@ -1,3 +1,9 @@
+package scene;
+
+import objects.Object3D;
+import tools.Intersection;
+import tools.Ray;
+
 import java.util.ArrayList;
 import java.util.List;
 

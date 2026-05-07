@@ -1,3 +1,7 @@
+package objects;
+
+import tools.*;
+
 public abstract class Object3D {
 
     protected Vector3D color;
