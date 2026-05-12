@@ -13,7 +13,7 @@ public class Triangle extends Object3D {
     private final Vector3D n2;
 
 
-    private static final double epsilon = 0.00001;
+    private static final double epsilon = 0.0000001;
 
     public Triangle(Vector3D v0, Vector3D v1, Vector3D v2, Vector3D n0, Vector3D n1, Vector3D n2, Vector3D color) {
         super(color);

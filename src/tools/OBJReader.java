@@ -9,9 +9,9 @@ public class OBJReader {
     public static void load(
             String path,
             Scene scene,
-            Vector3D color,
+            Vector3D offset,
             double scale,
-            Vector3D offset
+            Vector3D color
     ) throws IOException {
 
         List<Vector3D> vertices = new ArrayList<>();
@@ -21,6 +21,8 @@ public class OBJReader {
 
         BufferedReader br = new BufferedReader(new FileReader(path));
         String line;
+
+        int currentSmoothingGroup = 1;
 
         while ((line = br.readLine()) != null) {
 
@@ -51,6 +53,15 @@ public class OBJReader {
                 double z = Double.parseDouble(parts[3]) * scale;
 
                 vertices.add(new Vector3D(x, y, z).add(offset));
+            }
+
+            else if (line.startsWith("s ")) {
+
+                String[] parts = line.split("\\s+");
+
+                if (parts[1].equalsIgnoreCase("off")) {
+                    currentSmoothingGroup = Integer.parseInt(parts[1]);
+                }
             }
 
             // face
@@ -89,7 +100,9 @@ public class OBJReader {
                     faces.add(
                         new Face(
                             vertexIdx,
-                            normalIdx
+                            normalIdx,
+                            currentSmoothingGroup,
+                            hasNormals
                         )
                     );
                 }
@@ -97,44 +110,40 @@ public class OBJReader {
                 // if quad, splits into 2 triangles
                 else if (vertexIdx.length == 4) {
                     int[] tri1v = {
-                            vertexIdx[0],
-                            vertexIdx[1],
-                            vertexIdx[2]
+                        vertexIdx[0],
+                        vertexIdx[1],
+                        vertexIdx[2]
                     };
 
                     int[] tri2v = {
-                            vertexIdx[0],
-                            vertexIdx[2],
-                            vertexIdx[3]
+                        vertexIdx[0],
+                        vertexIdx[2],
+                        vertexIdx[3]
                     };
 
                     int[] tri1n = {
-                            normalIdx[0],
-                            normalIdx[1],
-                            normalIdx[2]
+                        normalIdx[0],
+                        normalIdx[1],
+                        normalIdx[2]
                     };
 
                     int[] tri2n = {
-                            normalIdx[0],
-                            normalIdx[2],
-                            normalIdx[3]
+                        normalIdx[0],
+                        normalIdx[2],
+                        normalIdx[3]
                     };
 
-                    faces.add(new Face(tri1v, tri1n));
-                    faces.add(new Face(tri2v, tri2n));
+                    faces.add(new Face(tri1v, tri1n,currentSmoothingGroup, hasNormals));
+                    faces.add(new Face(tri2v, tri2n,currentSmoothingGroup, hasNormals));
 
                 }
             }
         }
 
-        boolean useOBJNormals = !normals.isEmpty();
-        List<Vector3D> generatedNormals = new ArrayList<>();
+        Map<String, Vector3D> generatedNormals = new HashMap<>();
 
-        for (int i = 0; i < vertices.size(); i++) {
-            generatedNormals.add(new Vector3D(0,0,0));
-        }
 
-        if (!useOBJNormals) {
+        if (normals.isEmpty()) {
 
             for (Face face : faces) {
 
@@ -151,28 +160,44 @@ public class OBJReader {
 
                 Vector3D faceNormal = edge1.cross(edge2).normalize();
 
-                generatedNormals.set(
-                    i0,
-                    generatedNormals.get(i0).add(faceNormal)
+
+                String k0 = i0 + "_" + face.smoothingGroup;
+                String k1 = i1 + "_" + face.smoothingGroup;
+                String k2 = i2 + "_" + face.smoothingGroup;
+
+                generatedNormals.put(
+                    k0,
+                    generatedNormals
+                        .getOrDefault(k0,
+                            new Vector3D(0,0,0))
+                        .add(faceNormal)
                 );
 
-                generatedNormals.set(
-                    i1,
-                    generatedNormals.get(i1).add(faceNormal)
+                generatedNormals.put(
+                    k1,
+                    generatedNormals
+                        .getOrDefault(k1,
+                            new Vector3D(0,0,0))
+                        .add(faceNormal)
                 );
 
-                generatedNormals.set(
-                    i2,
-                    generatedNormals.get(i2).add(faceNormal)
+                generatedNormals.put(
+                    k2,
+                    generatedNormals
+                        .getOrDefault(k2,
+                            new Vector3D(0,0,0))
+                        .add(faceNormal)
                 );
+
+
             }
         }
 
-        if (!useOBJNormals) {
-            for (int i = 0; i < generatedNormals.size(); i++) {
-                generatedNormals.set(
-                    i,
-                    generatedNormals.get(i).normalize()
+        if (normals.isEmpty()) {
+            for (String key : generatedNormals.keySet()) {
+                generatedNormals.put(
+                    key,
+                    generatedNormals.get(key).normalize()
                 );
             }
         }
@@ -182,7 +207,7 @@ public class OBJReader {
             int[] v = face.vertexIdx;
             int[] n = face.normalIdx;
 
-            if (useOBJNormals) {
+            if (face.hasNormals) {
 
                 scene.addObject(
                     new Triangle(
@@ -201,21 +226,28 @@ public class OBJReader {
 
             } else {
 
-                scene.addObject(
-                    new Triangle(
+                String k0 = v[0] + "_" + face.smoothingGroup;
+                    String k1 = v[1] + "_" + face.smoothingGroup;
+                    String k2 = v[2] + "_" + face.smoothingGroup;
 
-                        vertices.get(v[0]),
-                        vertices.get(v[1]),
-                        vertices.get(v[2]),
+                    scene.addObject(
+                        new Triangle(
 
-                        generatedNormals.get(v[0]),
-                        generatedNormals.get(v[1]),
-                        generatedNormals.get(v[2]),
+                            vertices.get(v[0]),
+                            vertices.get(v[1]),
+                            vertices.get(v[2]),
 
-                        color
-                    )
-                );
+                            generatedNormals.get(k0),
+                            generatedNormals.get(k1),
+                            generatedNormals.get(k2),
+
+                            color
+                        )
+                    );
+
             }
+
+
         }
 
 

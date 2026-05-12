@@ -1,4 +1,6 @@
+import lights.DirectionalLight;
 import lights.Light;
+import lights.PointLight;
 import objects.Camera;
 import objects.Sphere;
 import scene.Scene;
@@ -21,18 +23,37 @@ public class Main {
                 30
         );
 
-        Light light = new Light(
-                new Vector3D(0, -1, -1),         //light coming from "the camera" and from above
-                new Vector3D(1,1,1),
-                2
-        );
-
-
         Scene scene = new Scene();
 
 
+        scene.addLight(new DirectionalLight(
+                new Vector3D(0, 0, -1),
+                new Vector3D(1,1,1),
+                .5
+        ));
+
+        scene.addLight(new PointLight(
+                new Vector3D(4,-5,-10),
+                new Vector3D(1,1,1),
+                1
+
+        ));
+
+        scene.addLight(new PointLight(
+                new Vector3D(-3, 0, -5),
+                new Vector3D(1,0,0),
+                .5
+        ));
+
+
+        scene.addLight(new PointLight(
+                new Vector3D(5, 5, -13),
+                new Vector3D(0,0,1),
+                1.2
+        ));
+
         scene.addObject(new Sphere(
-                new Vector3D(4, -5, -27),
+                new Vector3D(4, -5, -17),
                 2,
                 new Vector3D(0, 0, 1)
         ));
@@ -41,41 +62,32 @@ public class Main {
         OBJReader.load(
                 "src/models/teapot.obj",
                 scene,
-                new Vector3D(0, 1, 1),
+                new Vector3D(-2,-1,-9),
                 2,
-                new Vector3D(-2,-1,-9)
-
+                new Vector3D(0, 1, 1)
         );
 
 
         OBJReader.load(
                 "src/models/bunny.obj",
                 scene,
-                new Vector3D(1, 0, 1),
-                25.0,
-                new Vector3D(3,.5,-10)
+                new Vector3D(3,.5,-10),
+                25,
+                new Vector3D(1, 0, 1)
+        );
+
+        OBJReader.load(
+                "src/models/cube.obj",
+                scene,
+                new Vector3D(-2,-4, -12),
+                1,
+                new Vector3D(1,0,0)
         );
 
 
-//
-//        scene.addObject(new objects.Sphere(
-//                new tools.Vector3D(-12, 0, -30),
-//                1.5,
-//                new tools.Vector3D(0, 1, 0)
-//        ));
-//
-//
-//        scene.addObject(new objects.Triangle(
-//                new tools.Vector3D(1, -1, -7),
-//                new tools.Vector3D(4, -1, -7),
-//                new tools.Vector3D(2.5, 2, -7),
-//                new tools.Vector3D(0, 0, 1)
-//        ));
+        Raytracer rt = new Raytracer(camera, scene);
+        rt.setBackgroundColor(new Vector3D(0, 0, 0));
 
-
-        Raytracer rt = new Raytracer(camera, scene, light);
-        rt.setBackgroundColor(new Vector3D(1, 1, 1));
-
-        rt.renderToFile("outputRaytracerV05.png");
+        rt.renderToFile("outputRaytracerV06.png");
     }
 }

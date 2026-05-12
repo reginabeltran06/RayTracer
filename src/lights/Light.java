@@ -2,20 +2,14 @@ package lights;
 
 import tools.Vector3D;
 
-public class Light {
+public abstract class Light {
 
-    private Vector3D direction;
     private Vector3D color;
     private double intensity;
 
-    public Light(Vector3D direction, Vector3D color, double intensity) {
-        this.direction = direction.normalize();
+    public Light(Vector3D color, double intensity) {
         this.color = color;
         this.intensity = intensity;
-    }
-
-    public Vector3D getDirection() {
-        return direction;
     }
 
     public Vector3D getColor() {
@@ -25,4 +19,6 @@ public class Light {
     public double getIntensity() {
         return intensity;
     }
+
+    public abstract Vector3D getDirection(Vector3D point);
 }

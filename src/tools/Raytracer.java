@@ -1,5 +1,6 @@
 package tools;
 
+import lights.DirectionalLight;
 import lights.Light;
 import objects.Camera;
 import scene.Scene;
@@ -9,21 +10,20 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Raytracer {
 
     private final Camera camera;
     private final Scene scene;
 
-    private Light light;
-
     private Vector3D backgroundColor = new Vector3D(0, 0, 0);
 
 
-    public Raytracer(Camera camera, Scene scene, Light light) {
+    public Raytracer(Camera camera, Scene scene) {
         this.camera = camera;
         this.scene = scene;
-        this.light = light;
     }
 
     public BufferedImage render() {
@@ -40,26 +40,32 @@ public class Raytracer {
 
 
                 Vector3D pixelColor;
+
                 if (hit != null) {
                     Vector3D baseColor = hit.getObject().getColor();
                     Vector3D normal = hit.getNormal();
 
-                    Vector3D lightDir = light.getDirection().scale(-1);
+                    Vector3D finalColor = new Vector3D(0,0,0);
 
-                    double ndotl = Math.max(0, normal.dot(lightDir));
+                    for (Light light: scene.getLights()) {
 
-                    pixelColor = new Vector3D(
-                            baseColor.x * light.getColor().x * light.getIntensity() * ndotl,
-                            baseColor.y * light.getColor().y * light.getIntensity() * ndotl,
-                            baseColor.z * light.getColor().z * light.getIntensity() * ndotl
-                    );
+                        Vector3D lightDir = light.getDirection(hit.getPoint());
 
+                        double ndotl = Math.max(0, normal.dot(lightDir));
+
+                        Vector3D calculateColor = new Vector3D(
+                                baseColor.x * light.getColor().x * light.getIntensity() * ndotl,
+                                baseColor.y * light.getColor().y * light.getIntensity() * ndotl,
+                                baseColor.z * light.getColor().z * light.getIntensity() * ndotl
+                        );
+
+                        finalColor = finalColor.add(calculateColor);
+                    }
+
+                    pixelColor = finalColor;
                 }else{
                     pixelColor = backgroundColor;
                 }
-
-
-
 
                 image.setRGB(x, y, toRGB(pixelColor));
             }

@@ -1,5 +1,6 @@
 package scene;
 
+import lights.Light;
 import objects.Object3D;
 import tools.Intersection;
 import tools.Ray;
@@ -22,6 +23,12 @@ public class Scene {
     public List<Object3D> getObjects() {
         return objects;
     }
+
+    public final List<Light> lights = new ArrayList<>();
+
+    public List<Light> getLights() { return lights; }
+
+    public void addLight(Light light) { lights.add(light); }
 
     public Intersection closestIntersection(Ray ray, double near, double far) {
         Intersection closest = null;
